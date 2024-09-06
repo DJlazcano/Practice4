@@ -4,6 +4,7 @@ using System.Net.Security;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Channels;
+using System.Diagnostics;
 
 namespace Practice4
 {
@@ -66,15 +67,46 @@ namespace Practice4
                             Console.WriteLine("--------------------------------------------------");
                         });
 
-                        //var expensiveProducts = products.Where(p => p.Price > 50).ToList();
-                        //foreach (Product product in expensiveProducts)
-                        //{
-                        //    Console.WriteLine(product.Price + " " + product.ProductName);
-                        //}
-
                         break;
 
                     case 2:
+                        Console.WriteLine("Create a new Product");
+                        Console.WriteLine("Fill the following data:");
+
+                        Console.WriteLine("Please enter Product Name:");
+                        string productName = Console.ReadLine();
+
+                        Console.WriteLine("Please enter Product Description:");
+                        string productDescription = Console.ReadLine();
+
+                        Console.WriteLine("Please enter Product Price:");
+                        decimal productPrice = Convert.ToDecimal(Console.ReadLine());
+
+                        Console.WriteLine("Please enter Product Quantity for Stock:");
+                        int productStock = Convert.ToInt32(Console.ReadLine());
+
+                        //EXEC AddProduct @productName = 'Grapes',
+                        //@description = 'Small but sweet',
+                        //@price = 29.1,
+                        //@quantityInStock = 72;
+
+                        string query2 = "AddProduct";
+
+                        using (SqlConnection connection = new SqlConnection(connectionString))
+                        {
+                            SqlCommand command = new SqlCommand(query2, connection);
+                            command.CommandType = System.Data.CommandType.StoredProcedure;
+                            command.Parameters.AddWithValue("@productName", productName);
+                            command.Parameters.AddWithValue("@description", productDescription);
+                            command.Parameters.AddWithValue("@price", productPrice);
+                            command.Parameters.AddWithValue("@quantityInStock", productStock);
+
+                            connection.Open();
+                            SqlDataReader reader = command.ExecuteReader();
+
+                            Console.WriteLine($"Product {productName} Created!\n");
+                        }
+
                         break;
 
                     case 3:
