@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Channels;
 using System.Diagnostics;
+using System.Net;
 
 namespace Practice4
 {
@@ -13,7 +14,8 @@ namespace Practice4
         static void Main(string[] args)
         {
             int option = -1;
-            string connectionString = @"Server=localhost;Database=Practice4_JM;Integrated Security=True;";
+            SQLManager sqlManager = new SQLManager();
+
             do
             {
                 Console.WriteLine("Please type in the number of the activity to be performed: ");
@@ -31,45 +33,14 @@ namespace Practice4
                 {
                     case 1:
 
-                        List<Product> products = new List<Product>();
-                        string query = "SELECT * FROM Products";
+                        List<Product> products = sqlManager.GetProducts();
 
-                        using (SqlConnection connection = new SqlConnection(connectionString))
-                        {
-                            SqlCommand command = new SqlCommand(query, connection);
-                            connection.Open();
-
-                            using (SqlDataReader reader = command.ExecuteReader())
-                            {
-                                while (reader.Read())
-                                {
-                                    Product product = new Product
-                                    {
-                                        ProductId = reader.GetInt32(0),
-                                        ProductName = reader.GetString(1),
-                                        Description = reader.GetString(2),
-                                        Price = reader.GetDecimal(3),
-                                        QuantityStock = reader.GetInt32(4),
-                                    };
-                                    products.Add(product);
-                                }
-                            }
-                        }
-
-                        products.ForEach(p =>
-                        {
-                            Console.WriteLine("--------------------------------------------------");
-                            Console.WriteLine($"Product Id         : {p.ProductId}");
-                            Console.WriteLine($"Product Name       : {p.ProductName.Trim()}");
-                            Console.WriteLine($"Description        : {p.Description.Trim()}");
-                            Console.WriteLine($"Price              : {p.Price:C}");
-                            Console.WriteLine($"Quantity in Stock  : {p.QuantityStock}");
-                            Console.WriteLine("--------------------------------------------------");
-                        });
+                        Product.ListProducts(products);
 
                         break;
 
                     case 2:
+
                         Console.WriteLine("Create a new Product");
                         Console.WriteLine("Fill the following data:");
 
@@ -85,27 +56,9 @@ namespace Practice4
                         Console.WriteLine("Please enter Product Quantity for Stock:");
                         int productStock = Convert.ToInt32(Console.ReadLine());
 
-                        //EXEC AddProduct @productName = 'Grapes',
-                        //@description = 'Small but sweet',
-                        //@price = 29.1,
-                        //@quantityInStock = 72;
-
-                        string query2 = "AddProduct";
-
-                        using (SqlConnection connection = new SqlConnection(connectionString))
-                        {
-                            SqlCommand command = new SqlCommand(query2, connection);
-                            command.CommandType = System.Data.CommandType.StoredProcedure;
-                            command.Parameters.AddWithValue("@productName", productName);
-                            command.Parameters.AddWithValue("@description", productDescription);
-                            command.Parameters.AddWithValue("@price", productPrice);
-                            command.Parameters.AddWithValue("@quantityInStock", productStock);
-
-                            connection.Open();
-                            SqlDataReader reader = command.ExecuteReader();
-
-                            Console.WriteLine($"Product {productName} Created!\n");
-                        }
+                        sqlManager.PostProduct(productName,
+                            productDescription,
+                            productPrice, productStock);
 
                         break;
 
