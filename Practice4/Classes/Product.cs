@@ -28,19 +28,31 @@ namespace Practice4.Classes
             });
         }
 
-        public static List<Product> FilterProducts(List<Product> filterProducts,
-            int filterId = -1, string filterString = "")
+        public static List<Product> FilterProductsById(List<Product> filterProducts,
+            int filterId)
         {
-            return filterProducts.Where(p =>
-            (filterId != -1 && p.ProductId == filterId) ||
-            (!string.IsNullOrWhiteSpace(filterString) &&
-            p.ProductName.Contains(filterString, StringComparison.OrdinalIgnoreCase))).ToList();
+            if (filterId >= 0)
+            {
+                return filterProducts.Where(p => p.ProductId == filterId).ToList();
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public static List<Product> FilterByText(List<Product> filterProducts, string filterString)
         {
-            return filterProducts.Where(p =>
+            if (!string.IsNullOrEmpty(filterString))
+            {
+                return filterProducts.Where(p =>
             (p.ProductName.ToUpper()).Contains(filterString.ToUpper())).ToList();
+            }
+            else
+            {
+                return null;
+            }
+
         }
     }
 }

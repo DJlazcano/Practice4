@@ -79,8 +79,8 @@ namespace Practice4
                                 Console.WriteLine($"Enter the filter ID:");
                                 int filterId = Convert.ToInt32(Console.ReadLine());
 
-                                List<Product> filteredProductsById = Product.FilterProducts(filterProducts,
-                                    filterId, "");
+                                List<Product> filteredProductsById = Product.FilterProductsById(filterProducts,
+                                    filterId);
 
                                 Product.ListProducts(filteredProductsById);
 
@@ -98,8 +98,6 @@ namespace Practice4
                             default:
                                 break;
                         }
-
-                        Product.ListProducts(filterProducts);
 
                         break;
 
