@@ -18,13 +18,13 @@ namespace Practice4
 
             do
             {
-                Console.WriteLine("Please type in the number of the activity to be performed: ");
-                Console.WriteLine("Press the 1 key to get the data from the products table." +
-                    "\n Press the 2 key to request the creation of a new product" +
-                    "\n Press the 3 key to execute the stored procedure related to the product table" +
-                    "\n Press the 4 key to execute a visual execution of a view" +
-                    "\n Press the 5 key to execute a sql command from linq" +
-                    "\n Press the 6 key to perform a query to the products and purchases table data in linq" +
+                Console.WriteLine("\nPlease type in the number of the activity to be performed: ");
+                Console.WriteLine(" Press the 1 key to Get the data from the products table." +
+                    "\n Press the 2 key to Request the creation of a new product" +
+                    "\n Press the 3 key to Filter the information by text or Id from product table." +
+                    "\n Press the 4 key to Group sales by day and sort them by sales number from highest to lowest." +
+                    "\n Press the 5 key to Get the product and sales information for the month using line joins" +
+                    "\n Press the 6 key to Get the products that don't have Sales." +
                     "\n Press the 7 key to perform the sum of the products sold in the month." +
                     "\n Press the 0 key to exit...");
                 option = Convert.ToInt32(Console.ReadLine());
@@ -63,18 +63,69 @@ namespace Practice4
                         break;
 
                     case 3:
+                        Console.WriteLine("Filter Product Data, Filter by Id press (1)" +
+                            "\n Filter by text press (2):");
+
+                        var filter = Convert.ToInt32(Console.ReadLine());
+
+
+                        var filterVal = Console.ReadLine();
+
+                        List<Product> filterProducts = sqlManager.GetProducts();
+
+                        switch (filter)
+                        {
+                            case 1:
+                                Console.WriteLine($"Enter the filter ID:");
+                                int filterId = Convert.ToInt32(Console.ReadLine());
+
+                                List<Product> filteredProductsById = Product.FilterProducts(filterProducts,
+                                    filterId, "");
+
+                                Product.ListProducts(filteredProductsById);
+
+                                break;
+
+                            case 2:
+                                Console.WriteLine($"Enter the filter Text:");
+                                var filterText = Console.ReadLine();
+
+                                List<Product> filteredProductsByText = Product.FilterByText(filterProducts, filterText);
+
+                                Product.ListProducts(filteredProductsByText);
+
+                                break;
+                            default:
+                                break;
+                        }
+
+                        Product.ListProducts(filterProducts);
+
                         break;
 
                     case 4:
+
+                        sqlManager.GetOrderedSales();
+
                         break;
 
                     case 5:
+                        sqlManager.GetMonthlyProductSales();
+
                         break;
 
                     case 6:
+
+                        List<Product> noSalesOrPurchases = sqlManager.GetProductsWithNoSaleOrPurchase();
+                        Console.WriteLine("Products Not Sold nor Purchased: ");
+                        Product.ListProducts(noSalesOrPurchases);
+
                         break;
 
                     case 7:
+
+                        sqlManager.GetSumOfProductSales();
+
                         break;
 
                     default:

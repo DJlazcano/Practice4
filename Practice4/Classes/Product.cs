@@ -26,7 +26,21 @@ namespace Practice4.Classes
                 Console.WriteLine($"Quantity in Stock  : {p.QuantityStock}");
                 Console.WriteLine("--------------------------------------------------");
             });
+        }
 
+        public static List<Product> FilterProducts(List<Product> filterProducts,
+            int filterId = -1, string filterString = "")
+        {
+            return filterProducts.Where(p =>
+            (filterId != -1 && p.ProductId == filterId) ||
+            (!string.IsNullOrWhiteSpace(filterString) &&
+            p.ProductName.Contains(filterString, StringComparison.OrdinalIgnoreCase))).ToList();
+        }
+
+        public static List<Product> FilterByText(List<Product> filterProducts, string filterString)
+        {
+            return filterProducts.Where(p =>
+            (p.ProductName.ToUpper()).Contains(filterString.ToUpper())).ToList();
         }
     }
 }
